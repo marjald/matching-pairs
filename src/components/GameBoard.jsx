@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import Card from "./Card";
 
 export default function GameBoard({ cards, onCardClick }) {
+  console.log('<GameBoard /> rendered');
   return (
     <div className="flex flex-wrap mx-72">
       {cards.map((row) => (       
