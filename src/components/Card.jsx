@@ -8,9 +8,9 @@ export default function Card({
   onCardClick,
 }) {
   const cardContent = isRevealed ? (
-    <img src={cardImg} alt={cardImgAlt} className="w-32 h-32 m-2" />
+    <div className="w-32 h-32 m-2 bg-yellow-600 rounded-3xl hover:rotate-12"><img src={cardImg} alt={cardImgAlt} className="w-32 h-32 m-2" /></div>
   ) : (
-    <div className="w-32 h-32 m-2 bg-yellow-800"></div>
+    <div className="w-32 h-32 m-2 bg-yellow-800 rounded-3xl hover:rotate-12"></div>
   );
 
   return (

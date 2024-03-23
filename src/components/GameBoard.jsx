@@ -2,17 +2,17 @@ import PropTypes from "prop-types";
 import Card from "./Card";
 
 export default function GameBoard({ cards, onCardClick }) {
-  console.log('<GameBoard /> rendered');
   return (
-    <div className="flex flex-wrap mx-72">
-      {cards.map((row) => (       
-          <Card key={row.id}
-            isRevealed={row.revealed}
-            cardImg={row.image.src}
-            cardImgAlt={row.image.alt}
-            cardID={row.id}
-            onCardClick={onCardClick}
-          />
+    <div className="flex flex-wrap gap-4 m-auto w-3/4">
+      {cards.map((row) => (
+        <Card
+          key={row.id}
+          isRevealed={row.revealed}
+          cardImg={row.image.src}
+          cardImgAlt={row.image.alt}
+          cardID={row.id}
+          onCardClick={onCardClick}
+        />
       ))}
     </div>
   );
