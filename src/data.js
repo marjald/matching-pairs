@@ -111,3 +111,5 @@ export const CARD_DECK = [
     image: { src: telescopeImg, alt: "Telescope" },
   },
 ];
+
+export const gameLength = CARD_DECK.length;
