@@ -30,6 +30,7 @@ export default function Card({
 
 Card.propTypes = {
   isRevealed: PropTypes.bool,
+  isSelected: PropTypes.bool,
   cardImg: PropTypes.string,
   cardImgAlt: PropTypes.string,
   cardID: PropTypes.string,

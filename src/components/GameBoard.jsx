@@ -27,24 +27,21 @@ export default function GameBoard({
   );
 }
 
+// Define the PropTypes shape as a constant
+const cardShape = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  revealed: PropTypes.bool,
+  image: PropTypes.shape({
+    src: PropTypes.string.isRequired,
+    alt: PropTypes.string.isRequired,
+  }).isRequired,
+}).isRequired;
+
+// GameBoard.propTypes definition with selectedCard1 and selectedCard2
 GameBoard.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      revealed: PropTypes.bool,
-      image: PropTypes.shape({
-        src: PropTypes.string.isRequired,
-        alt: PropTypes.string.isRequired,
-      }).isRequired,
-    })
-  ).isRequired,
+  cards: PropTypes.arrayOf(cardShape).isRequired,
   onCardClick: PropTypes.func.isRequired,
-  selectedCard1: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    revealed: PropTypes.bool,
-    image: PropTypes.shape({
-      src: PropTypes.string.isRequired,
-      alt: PropTypes.string.isRequired,
-    }).isRequired,
-  }),
+  selectedCard1: cardShape,
+  selectedCard2: cardShape,
 };
+
