@@ -4,7 +4,6 @@ import Card from "./Card";
 import { gameLength } from "../data";
 
 export default function GameBoard({ cards }) {
-
   const [playerSelections, setPlayerSelections] = useState([]);
   const [selectedCards, setSelectedCards] = useState([]);
 
@@ -12,6 +11,13 @@ export default function GameBoard({ cards }) {
   function handleCardSelection(id) {
     // get the index of the selected card in the gameBoard array so we can set it to revealed.
     const selectedCardIndex = cards.findIndex((card) => card.id === id);
+
+    // if there was no match on last turn then selectedCards would contain null. Hide the cards on this click.
+    if (selectedCards.includes(null)) {
+      cards[selectedCard1Index].revealed = false;
+      cards[selectedCard2Index].revealed = false;
+      setSelectedCards([]);
+    }
 
     // add the selected card id to the playerSelections state array if it is not currently revealed.
     if (cards[selectedCardIndex].revealed === false) {
@@ -27,18 +33,24 @@ export default function GameBoard({ cards }) {
         } else return [id, ...prevSelectedCards];
       });
 
-    // update the card in the gameBoard to show as revealed
-    cards[selectedCardIndex].revealed = true;
+      // update the card in the gameBoard to show as revealed
+      cards[selectedCardIndex].revealed = true;
 
-  // Selected Cards Match
-  
+      // Selected Cards Match
 
-  // Selected Cards don't match
-
+      // Selected Cards don't match
     }
-
-
   }
+
+  // The last 2 selected cards from the board, get the index and the card object
+  const selectedCard1Index = cards.findIndex(
+    (card) => card.id === playerSelections[0]
+  );
+  const selectedCard2Index = cards.findIndex(
+    (card) => card.id === playerSelections[1]
+  );
+  let selectedCard1 = cards[selectedCard1Index];
+  let selectedCard2 = cards[selectedCard2Index];
 
   // if the length of the playerSelections array is even then we know that a new pair of cards has been selected
   if (
@@ -46,30 +58,27 @@ export default function GameBoard({ cards }) {
     playerSelections.length > 0 &&
     selectedCards.length === 2
   ) {
-    // The last 2 selected cards from the board, get the index and the card object
-    const selectedCard1Index = cards.findIndex(
-      (card) => card.id === playerSelections[0]
-    );
-    const selectedCard2Index = cards.findIndex(
-      (card) => card.id === playerSelections[1]
-    );
-    let selectedCard1 = cards[selectedCard1Index];
-    let selectedCard2 = cards[selectedCard2Index];
-
     // use the card image alt text to identify a match
     if (selectedCard1.image.alt === selectedCard2.image.alt) {
-      console.log("MATCH");
-      setSelectedCards((prevSelectedCards) => ['matched', ...prevSelectedCards]);
+      setSelectedCards((prevSelectedCards) => [
+        "matched",
+        ...prevSelectedCards,
+      ]);
       setTimeout(() => {
         setSelectedCards([]);
       }, 1500);
-      
     } else {
+      setSelectedCards((prevSelectedCards) => [
+        "nomatch",
+        ...prevSelectedCards,
+      ]);
       //if there is not match then hide the images
       setTimeout(() => {
-       cards[selectedCard1Index].revealed = false;
-       cards[selectedCard2Index].revealed = false;
-     }, 100);
+        setSelectedCards((prevSelectedCards) => [
+          null,
+          ...prevSelectedCards.slice(1),
+        ]);
+      }, 500);
     }
   }
 
@@ -95,7 +104,13 @@ export default function GameBoard({ cards }) {
           key={row.id}
           isRevealed={row.revealed}
           isSelected={selectedCards.includes(row.id)}
-          isMatched={selectedCards.includes(row.id) && selectedCards.includes('matched')}
+          isMatched={
+            selectedCards.includes(row.id) && selectedCards.includes("matched")
+          }
+          isNotMatched={
+            selectedCards.includes(row.id) && selectedCards.includes("nomatch")
+          }
+          isDisabled={selectedCards.includes('matched') || selectedCards.includes('nomatch')}
           cardImg={row.image.src}
           cardImgAlt={row.image.alt}
           cardID={row.id}
