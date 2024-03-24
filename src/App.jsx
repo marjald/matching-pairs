@@ -10,8 +10,9 @@ const gameBoard = [...INITIAL_GAMEBOARD];
 
 function App() {
   const [playerSelections, setPlayerSelections] = useState([]);
-  
+  const [selectedCards, setSelectedCards] = useState([]);
 
+  console.log(selectedCards);
   function handleCardSelection(id) {
     // get the index of the selected card in the gameBoard array so we can set it to revealed.
     const selectedCardIndex = gameBoard.findIndex((card) => card.id === id);
@@ -22,28 +23,41 @@ function App() {
         id,
         ...prevPlayerSelections,
       ]);
+
+      // update the selected cards state.  If there is only 1 then don't bother removing the last one.
+      setSelectedCards((prevSelectedCards) => {
+        if (prevSelectedCards.length === 2) {
+          return [id, ...prevSelectedCards.slice(0, -1)];
+        } else return [id, ...prevSelectedCards];
+      });
     }
+
     // update the card in the gameBoard to show as revealed
     gameBoard[selectedCardIndex].revealed = true;
   }
 
-  // The last 2 selected cards from the board, get the index and the card object
-  const selectedCard1Index = gameBoard.findIndex(
-    (card) => card.id === playerSelections[0]
-  );
-  const selectedCard2Index = gameBoard.findIndex(
-    (card) => card.id === playerSelections[1]
-  );
-  let selectedCard1 = gameBoard[selectedCard1Index];
-  let selectedCard2 = gameBoard[selectedCard2Index];
-
   // if the length of the playerSelections array is even then we know that a new pair of cards has been selected
-  if (playerSelections.length % 2 === 0 && playerSelections.length > 0) {
+  if (
+    playerSelections.length % 2 === 0 &&
+    playerSelections.length > 0 &&
+    selectedCards.length === 2
+  ) {
+    // The last 2 selected cards from the board, get the index and the card object
+    const selectedCard1Index = gameBoard.findIndex(
+      (card) => card.id === playerSelections[0]
+    );
+    const selectedCard2Index = gameBoard.findIndex(
+      (card) => card.id === playerSelections[1]
+    );
+    let selectedCard1 = gameBoard[selectedCard1Index];
+    let selectedCard2 = gameBoard[selectedCard2Index];
+
     // use the card image alt text to identify a match
     if (selectedCard1.image.alt === selectedCard2.image.alt) {
       console.log("MATCH");
+      setSelectedCards([]);
     } else {
-      // if there is not match then hide the images
+      //if there is not match then hide the images
       setTimeout(() => {
         gameBoard[selectedCard1Index].revealed = false;
         gameBoard[selectedCard2Index].revealed = false;
@@ -71,8 +85,7 @@ function App() {
       <Header heading="Matching Pairs" />
       <GameBoard
         cards={gameBoard}
-        selectedCard1={selectedCard1}
-        selectedCard2={selectedCard2}
+        selectedCards={selectedCards}
         onCardClick={handleCardSelection}
       />
     </>

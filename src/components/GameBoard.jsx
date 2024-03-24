@@ -1,22 +1,14 @@
 import PropTypes from "prop-types";
 import Card from "./Card";
 
-export default function GameBoard({
-  cards,
-  selectedCard1,
-  selectedCard2,
-  onCardClick,
-}) {
+export default function GameBoard({ cards, selectedCards, onCardClick }) {
   return (
     <div className="flex flex-wrap gap-4 m-auto w-3/4">
       {cards.map((row) => (
         <Card
           key={row.id}
           isRevealed={row.revealed}
-          isSelected={
-            (selectedCard1 && selectedCard1.id === row.id) ||
-            (selectedCard2 && selectedCard2.id === row.id)
-          }
+          isSelected={selectedCards.includes(row.id)}
           cardImg={row.image.src}
           cardImgAlt={row.image.alt}
           cardID={row.id}
@@ -41,7 +33,5 @@ const cardShape = PropTypes.shape({
 GameBoard.propTypes = {
   cards: PropTypes.arrayOf(cardShape).isRequired,
   onCardClick: PropTypes.func.isRequired,
-  selectedCard1: cardShape,
-  selectedCard2: cardShape,
+  selectedCards: PropTypes.arrayOf(PropTypes.string),
 };
-
