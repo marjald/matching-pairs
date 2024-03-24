@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 export default function Card({
   isRevealed,
   isSelected,
+  isMatched,
   cardImg,
   cardImgAlt,
   cardID,
@@ -12,6 +13,8 @@ export default function Card({
   isSelected
     ? (cardClasses += " bg-blue-200 rotate-12")
     : (cardClasses += " bg-blue-950");
+
+  isMatched ? (cardClasses += " animate-bounce") : null;
 
   const cardContent = isRevealed ? (
     <div className={cardClasses}>
@@ -31,6 +34,7 @@ export default function Card({
 Card.propTypes = {
   isRevealed: PropTypes.bool,
   isSelected: PropTypes.bool,
+  isMatched: PropTypes.bool,
   cardImg: PropTypes.string,
   cardImgAlt: PropTypes.string,
   cardID: PropTypes.string,
