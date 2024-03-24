@@ -35,7 +35,7 @@ const cardShape = PropTypes.shape({
     src: PropTypes.string.isRequired,
     alt: PropTypes.string.isRequired,
   }).isRequired,
-}).isRequired;
+});
 
 // GameBoard.propTypes definition with selectedCard1 and selectedCard2
 GameBoard.propTypes = {

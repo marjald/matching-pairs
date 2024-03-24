@@ -6,10 +6,11 @@ import Header from "./components/Header";
 // shuffle the cards
 const INITIAL_GAMEBOARD = CARD_DECK;
 INITIAL_GAMEBOARD.sort(() => Math.random() - 0.5);
+const gameBoard = [...INITIAL_GAMEBOARD];
 
 function App() {
   const [playerSelections, setPlayerSelections] = useState([]);
-  const gameBoard = [...INITIAL_GAMEBOARD];
+  
 
   function handleCardSelection(id) {
     // get the index of the selected card in the gameBoard array so we can set it to revealed.
