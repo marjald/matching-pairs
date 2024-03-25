@@ -102,15 +102,8 @@ export default function GameBoard({ cards }) {
       {cards.map((row) => (
         <Card
           key={row.id}
+          selectedCards={selectedCards}
           isRevealed={row.revealed}
-          isSelected={selectedCards.includes(row.id)}
-          isMatched={
-            selectedCards.includes(row.id) && selectedCards.includes("matched")
-          }
-          isNotMatched={
-            selectedCards.includes(row.id) && selectedCards.includes("nomatch")
-          }
-          isDisabled={selectedCards.includes('matched') || selectedCards.includes('nomatch')}
           cardImg={row.image.src}
           cardImgAlt={row.image.alt}
           cardID={row.id}
