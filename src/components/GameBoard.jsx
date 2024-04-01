@@ -2,83 +2,60 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import Card from "./Card";
 import { gameLength } from "../data";
+import { getCardIndex } from "../utils";
 
 export default function GameBoard({ cards }) {
-  const [playerSelections, setPlayerSelections] = useState([]);
-  const [selectedCards, setSelectedCards] = useState([]);
+  const [gameState, setGamesState] = useState({
+    selectedCard1Id: null,
+    selectedCard2Id: null,
+    matchStatus: null,
+  });
 
-  console.log(selectedCards);
   function handleCardSelection(id) {
-    // get the index of the selected card in the gameBoard array so we can set it to revealed.
-    const selectedCardIndex = cards.findIndex((card) => card.id === id);
-
-    // if there was no match on last turn then selectedCards would contain null. Hide the cards on this click.
-    if (selectedCards.includes(null)) {
-      cards[selectedCard1Index].revealed = false;
-      cards[selectedCard2Index].revealed = false;
-      setSelectedCards([]);
-    }
-
-    // add the selected card id to the playerSelections state array if it is not currently revealed.
+    // get the index of the selected card on the board (cards array) in the gameBoard array so we can set it to revealed.
+    const selectedCardIndex = getCardIndex(cards, id);
+    // if the card is not revealed
     if (cards[selectedCardIndex].revealed === false) {
-      setPlayerSelections((prevPlayerSelections) => [
-        id,
-        ...prevPlayerSelections,
-      ]);
-
-      // update the selected cards state.  If there is only 1 then don't bother removing the last one.
-      setSelectedCards((prevSelectedCards) => {
-        if (prevSelectedCards.length === 2) {
-          return [id, ...prevSelectedCards.slice(0, -1)];
-        } else return [id, ...prevSelectedCards];
-      });
-
-      // update the card in the gameBoard to show as revealed
+      // reveal it
       cards[selectedCardIndex].revealed = true;
-
-      // Selected Cards Match
-
-      // Selected Cards don't match
     }
-  }
 
-  // The last 2 selected cards from the board, get the index and the card object
-  const selectedCard1Index = cards.findIndex(
-    (card) => card.id === playerSelections[0]
-  );
-  const selectedCard2Index = cards.findIndex(
-    (card) => card.id === playerSelections[1]
-  );
-  let selectedCard1 = cards[selectedCard1Index];
-  let selectedCard2 = cards[selectedCard2Index];
-
-  // if the length of the playerSelections array is even then we know that a new pair of cards has been selected
-  if (
-    playerSelections.length % 2 === 0 &&
-    playerSelections.length > 0 &&
-    selectedCards.length === 2
-  ) {
-    // use the card image alt text to identify a match
-    if (selectedCard1.image.alt === selectedCard2.image.alt) {
-      setSelectedCards((prevSelectedCards) => [
-        "matched",
-        ...prevSelectedCards,
-      ]);
+    if (gameState.selectedCard1Id) {
+      // check for a match
+      const selectedMatchStatus =
+        cards[getCardIndex(cards, gameState.selectedCard1Id)].image.alt ===
+        cards[getCardIndex(cards, id)].image.alt
+          ? "matched"
+          : "nomatch";
+      // update to matched state which will trigger the animation styles and disable the click actions on other cards.
+      setGamesState((prevGameState) => {
+        return {
+          ...prevGameState,
+          selectedCard2Id: id,
+          matchStatus: selectedMatchStatus,
+        };
+      });
+      // wait and then reset so the matched cards will be de-selected and animation stopped.
       setTimeout(() => {
-        setSelectedCards([]);
-      }, 1500);
+        if (selectedMatchStatus === "nomatch") {
+          cards[
+            getCardIndex(cards, gameState.selectedCard1Id)
+          ].revealed = false;
+          cards[getCardIndex(cards, id)].revealed = false;
+        }
+        setGamesState({
+          selectedCard1Id: null,
+          selectedCard2Id: null,
+          matchStatus: null,
+        });
+      }, 1750);
     } else {
-      setSelectedCards((prevSelectedCards) => [
-        "nomatch",
-        ...prevSelectedCards,
-      ]);
-      //if there is not match then hide the images
-      setTimeout(() => {
-        setSelectedCards((prevSelectedCards) => [
-          null,
-          ...prevSelectedCards.slice(1),
-        ]);
-      }, 500);
+      // no cards selected (first time only)
+      setGamesState({
+        selectedCard1Id: id,
+        selectedCard2Id: null,
+        matchStatus: null,
+      });
     }
   }
 
@@ -102,7 +79,7 @@ export default function GameBoard({ cards }) {
       {cards.map((row) => (
         <Card
           key={row.id}
-          selectedCards={selectedCards}
+          selectedCards={gameState}
           isRevealed={row.revealed}
           cardImg={row.image.src}
           cardImgAlt={row.image.alt}

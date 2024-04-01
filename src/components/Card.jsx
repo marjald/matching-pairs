@@ -8,13 +8,23 @@ export default function Card({
   cardID,
   onCardClick,
 }) {
-  const isSelected = selectedCards.includes(cardID);
+  const isSelected =
+    selectedCards.selectedCard1Id === cardID ||
+    selectedCards.selectedCard2Id === cardID;
+
   const isMatched =
-    selectedCards.includes(cardID) && selectedCards.includes("matched");
+    (selectedCards.selectedCard1Id === cardID ||
+      selectedCards.selectedCard2Id === cardID) &&
+    selectedCards.matchStatus === "matched";
+
   const isNotMatched =
-    selectedCards.includes(cardID) && selectedCards.includes("nomatch");
+    (selectedCards.selectedCard1Id === cardID ||
+      selectedCards.selectedCard2Id === cardID) &&
+    selectedCards.matchStatus === "nomatch";
+
   const isDisabled =
-    selectedCards.includes("matched") || selectedCards.includes("nomatch");
+    selectedCards.matchStatus === "matched" ||
+    selectedCards.matchStatus === "nomatch";
 
   // Derive the classes needed for each card
   let cardClasses = "w-32 h-32 m-2 rounded-3xl hover:rotate-12";
@@ -53,14 +63,14 @@ export default function Card({
 }
 
 Card.propTypes = {
+  selectedCards: PropTypes.shape({
+    selectedCard1Id: PropTypes.string,
+    selectedCard2Id: PropTypes.string,
+    matchStatus: PropTypes.string,
+  }),
   isRevealed: PropTypes.bool,
-  isSelected: PropTypes.bool,
-  isDisabled: PropTypes.bool,
-  isMatched: PropTypes.bool,
-  isNotMatched: PropTypes.bool,
   cardImg: PropTypes.string,
   cardImgAlt: PropTypes.string,
   cardID: PropTypes.string,
   onCardClick: PropTypes.func.isRequired,
-  selectedCards: PropTypes.arrayOf(PropTypes.string),
 };
