@@ -14,17 +14,20 @@ export default function GameBoard({ cards }) {
   function handleCardSelection(id) {
     // get the index of the selected card on the board (cards array) in the gameBoard array so we can set it to revealed.
     const selectedCardIndex = getCardIndex(cards, id);
-    // if the card is not revealed
-    if (cards[selectedCardIndex].revealed === false) {
-      // reveal it
-      cards[selectedCardIndex].revealed = true;
-    }
+    cards[selectedCardIndex].revealed = true;
 
+    // if there is already a card selected...
     if (gameState.selectedCard1Id) {
-      // check for a match
+      // ...get the index of this card.  We now have the 2 selected card indexes selectedCardIndex and prevSelectedCardIndex
+      const prevSelectedCardIndex = getCardIndex(
+        cards,
+        gameState.selectedCard1Id
+      );
+      // check for a match between the 2 selected cards using the alt image text which is the same for each pair of cards
+      // status is either matched or nomatch and set to selectedMatchStatus to use in updating the game state
       const selectedMatchStatus =
-        cards[getCardIndex(cards, gameState.selectedCard1Id)].image.alt ===
-        cards[getCardIndex(cards, id)].image.alt
+        cards[prevSelectedCardIndex].image.alt ===
+        cards[selectedCardIndex].image.alt
           ? "matched"
           : "nomatch";
       // update to matched state which will trigger the animation styles and disable the click actions on other cards.
@@ -37,11 +40,11 @@ export default function GameBoard({ cards }) {
       });
       // wait and then reset so the matched cards will be de-selected and animation stopped.
       setTimeout(() => {
+        // if there wasn't a match then we also need to hide the cards that were selected (flip them face down)
+        // if there was a match this is not needed as the cards can remain face up
         if (selectedMatchStatus === "nomatch") {
-          cards[
-            getCardIndex(cards, gameState.selectedCard1Id)
-          ].revealed = false;
-          cards[getCardIndex(cards, id)].revealed = false;
+          cards[prevSelectedCardIndex].revealed = false;
+          cards[selectedCardIndex].revealed = false;
         }
         setGamesState({
           selectedCard1Id: null,
@@ -50,7 +53,7 @@ export default function GameBoard({ cards }) {
         });
       }, 1750);
     } else {
-      // no cards selected (first time only)
+      // no cards selected
       setGamesState({
         selectedCard1Id: id,
         selectedCard2Id: null,
@@ -59,6 +62,7 @@ export default function GameBoard({ cards }) {
     }
   }
 
+  // temporary end of game check.  need to add a game over screen with a reset and score perhaps.
   const revealedCardCount = cards.reduce((count, card) => {
     // Check if the revealed property is true
     if (card.revealed === true) {
