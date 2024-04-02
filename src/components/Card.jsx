@@ -12,19 +12,9 @@ export default function Card({
     selectedCards.selectedCard1Id === cardID ||
     selectedCards.selectedCard2Id === cardID;
 
-  const isMatched =
-    (selectedCards.selectedCard1Id === cardID ||
-      selectedCards.selectedCard2Id === cardID) &&
-    selectedCards.matchStatus === "matched";
-
-  const isNotMatched =
-    (selectedCards.selectedCard1Id === cardID ||
-      selectedCards.selectedCard2Id === cardID) &&
-    selectedCards.matchStatus === "nomatch";
-
-  const isDisabled =
-    selectedCards.matchStatus === "matched" ||
-    selectedCards.matchStatus === "nomatch";
+  const isMatched = isSelected && selectedCards.matchStatus === "matched";
+  const isNotMatched = isSelected && selectedCards.matchStatus === "nomatch";
+  const isDisabled = selectedCards.matchStatus !== null;
 
   // Derive the classes needed for each card
   let cardClasses = "w-32 h-32 m-2 rounded-3xl hover:rotate-12";
@@ -34,15 +24,12 @@ export default function Card({
     ? (cardClasses += " bg-blue-200 rotate-12")
     : (cardClasses += " bg-blue-950");
 
-  // If there is a match then add the success animation
-  isMatched
-    ? (cardClasses += " animate-jump animate-once animate-duration-[2000ms]")
-    : null;
-
-  // If there is no match then set the failure animation
-  isNotMatched
-    ? (cardClasses += " animate-shake animate-thrice animate-duration-100")
-    : null;
+  // If there is a match then add the success animation, if no match then add shake animation
+  if (isMatched) {
+    cardClasses += " animate-jump animate-once animate-duration-[2000ms]";
+  } else if (isNotMatched) {
+    cardClasses += " animate-shake animate-thrice animate-duration-100";
+  }
 
   // set the content for the card.  If it is reveled then show the image, otherwise show empty card (card back).
   const cardContent = isRevealed ? (
